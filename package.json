@@ -1,7 +1,7 @@
 {
   "name": "social-network",
   "version": "1.0.0",
-  "description": "",
+  "description": "It's a backend app developed for summer practice in petterson apps. Here you can find usage of node expressJs mongodb and hbs as html template.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,18 +10,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cfoster121/social-network.git"
+    "url": "git+https://github.com/IhorDovhanych/SocialMediaNodeJs.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ihor",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cfoster121/social-network/issues"
+    "url": "https://github.com/IhorDovhanych/SocialMediaNodeJs/issues"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "express": "^4.17.1",
     "mongoose": "^6.0.13",
     "nodemon": "^2.0.22"
   },
-  "homepage": "https://github.com/cfoster121/social-network#readme"
+  "homepage": "https://github.com/IhorDovhanych/SocialMediaNodeJs#readme",
+  "devDependencies": {}
 }

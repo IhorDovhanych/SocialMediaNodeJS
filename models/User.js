@@ -7,7 +7,6 @@ const thoughtSchema = require('./Thought');
 const userSchema = new Schema({
     username: {
         type: String,
-        unique: true,
         required: [true, 'Please enter a username'],
         trim: true
     },
@@ -17,20 +16,24 @@ const userSchema = new Schema({
         required: [true, 'Please enter an email'],
         match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     },
-    thoughts: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Thought',
-        },
-    ],
-    friends: [this]
+    password: {
+        type: String,
+        required: [true, 'Please enter a password'],
+    },
+    // publications: [
+    //     {
+    //         type: Schema.Types.ObjectId,
+    //         ref: 'Publication',
+    //     },
+    // ],
+    friends: [this],
+    friendsRequests: [this]
 },
     {
         toJSON: {
             getters: true,
         },
     }
-
 );
 
 // Create User model via userSchema

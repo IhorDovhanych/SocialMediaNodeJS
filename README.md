@@ -10,12 +10,6 @@ This is an API for a social network that allows for creating users, creating tho
 
 To use this app the user needs to run 'npm i' to install dependencies, 'npm run seed' if they wish to seed the data, and have MongoDB on their system.
 
-## Tutorial  
-  
-  * Watch the tutorial [here](https://youtu.be/LrXU0ppS5I4)  
-    
-    ![Screenshot](assets/images/socialnetwork.png)
-
 ## Built With
 
 * [MongoDB](https://docs.mongodb.com/)
