@@ -3,7 +3,7 @@ It's a backend app developed for summer practice in petterson apps. Here you can
 
 # Social Network
 
-This is an API for a social network that allows for creating users, creating thoughts, adding reactions to thoughts, and adding friends to users. 
+This is an API for a social network that allows for creating users, creating publications, adding comments to publications, and adding friends to users. 
 
 
 ## Getting Started

@@ -1,7 +1,7 @@
 // Require schema and model from mongoose
 const { Schema, model } = require('mongoose');
-// Require thoughtSchema for 'thoughts' key
-const thoughtSchema = require('./Thought');
+// Require publicationSchema for 'publications' key
+//const publicationSchema = require('./Publication');
 
 // Construct a new instance of the schema class
 const userSchema = new Schema({
@@ -19,13 +19,14 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: [true, 'Please enter a password'],
+        minLength: 8,
     },
-    // publications: [
-    //     {
-    //         type: Schema.Types.ObjectId,
-    //         ref: 'Publication',
-    //     },
-    // ],
+    publications: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Publication',
+        },
+    ],
     friends: [this],
     friendsRequests: [this]
 },
