@@ -1,101 +1,158 @@
-const { createDecipheriv } = require('crypto');
-const { Publication, User } = require('../models');
+const { createDecipheriv } = require("crypto");
+const { Publication, User } = require("../models");
 
 module.exports = {
     // Get all publications
-    getPublications(req, res) {
-        Publication.find()
-            .then((publication) => res.json(publication))
-            .catch((err) => res.status(500).json(err));
+    async getPublications(req, res) {
+        const publication = await Publication.find();
+        try {
+            res.json(publication);
+        } catch (err) {
+            res.status(500).json(err);
+        }
     },
 
     // Create new publication
-    createPublication(req, res) {
-        Publication.create({
-            publicationText: req.body.publicationText,
-            user: req.body.userId
-        })
-            .then((dbPublicationData) => {
-                return User.findOneAndUpdate(
-                    { _id: req.body.userId },
-                    { $push: { publications: dbPublicationData._id } },
-                    { new: true }
-                );
-            })
-            .then(response => {
-                if (!response) {
-                    res.status(404).json({ message: 'Error' });
-                    return;
-                }
-                res.json(response)
-            })
-            .catch(err => res.json(err));
+    async createPublication(req, res) {
+        const publication = await Publication.create({
+            publicationBody: req.body.publicationBody,
+            user: req.body.userId,
+        });
+        try {
+            const user = await User.findOneAndUpdate(
+                { _id: req.body.userId },
+                { $push: { publications: publication._id } },
+                { new: true }
+            );
+            try {
+                res.json(user);
+            } catch (err) {
+                res.status(500).json(err);
+            }
+        } catch (err) {
+            res.status(500).json(err);
+        }
     },
 
     //Get single publication
-    getSinglePublication(req, res) {
-        Publication.findOne({ _id: req.params.publicationId })
-            .then((publication) =>
-                !publication
-                    ? res.status(404).json({ message: 'No publication found' })
-                    : res.json(publication)
-            )
-            .catch((err) => res.status(500).json(err));
+    async getSinglePublication(req, res) {
+        const publication = await Publication.findOne({
+            _id: req.params.publicationId,
+        });
+        try {
+            !publication
+                ? res.status(404).json({ message: "No publication found" })
+                : res.json(publication);
+        } catch (err) {
+            res.status(500).json(err);
+        }
     },
 
     //Update a publication
-    updatePublication(req, res) {
-        Publication.findOneAndUpdate(
+    async updatePublication(req, res) {
+        const publication = await Publication.findOneAndUpdate(
             { _id: req.params.publicationId },
-            { $set: req.body }
-        )
-            .then((publication) =>
-                !course
-                    ? res.status(404).json({ message: 'No publication found' })
-                    : res.json(publication)
-            )
-            .catch((err) => res.status(500).json(err));
+            { $set: req.body },
+            { new: true }
+        );
+        try {
+            !publication
+                ? res.status(404).json({ message: "No publication found" })
+                : res.json(publication);
+        } catch (err) {
+            res.status(500).json(err);
+        }
     },
 
     // Delete a publication
-    deletePublication(req, res) {
-        Publication.findOneAndDelete({ _id: req.params.publicationId })
-            .then((publication) =>
-                !publication
-                    ? res.status(404).json({ message: 'No publication found' })
-                    : res.json({ message: 'Publication deleted!' }))
-            .catch((err) => res.status(500).json(err));
+    async deletePublication(req, res) {
+        const publication = await Publication.findOneAndDelete({
+            _id: req.params.publicationId,
+        });
+        try {
+            if (!publication) {
+                res.status(404).json({ message: "No publication found" });
+            } else {
+                const user = await User.findOneAndUpdate(
+                    { publications: req.params.publicationId },
+                    { $pull: { publications: req.params.publicationId } },
+                    { new: true }
+                );
+                res.json({ message: "Publication deleted!", user });
+            }
+        } catch (err) {
+            res.status(500).json(err);
+        }
     },
 
     // Add comment to a publication
-    createComment(req, res) {
-        Publication.findOneAndUpdate(
+    async createComment(req, res) {
+        const publication = await Publication.findOneAndUpdate(
             { _id: req.params.publicationId },
             { $addToSet: { comments: req.body } },
-        )
-            .then((publication) =>
-                !publication
-                    ? res
-                        .status(404)
-                        .json({ message: 'No publication found' })
-                    : res.json(publication)
-            )
-            .catch((err) => res.status(500).json(err));
+            { new: true }
+        );
+        try {
+            !publication
+                ? res.status(404).json({ message: "No publication found" })
+                : res.json(publication);
+        } catch (err) {
+            res.status(500).json(err);
+        }
     },
 
     // Remove a comment from a publication
-    deleteComment(req, res) {
-        Publication.findOneAndUpdate(
-            { _id: req.params.publicationId },
-            { $pull: { comments: { id: req.body.commentId } } },
-        )
-            .then((user) =>
-                !user
-                    ? res
-                        .status(404)
-                        .json({ message: 'No user found' })
-                    : res.json(user)
-            )
-            .catch((err) => res.status(500).json(err));
+    async deleteComment(req, res) {
+        const publication = await Publication.findOne({
+            _id: req.params.publicationId,
+        });
+        const index = publication.comments.findIndex(
+            (obj) => obj.id === req.params.commentId
+        );
+        if (index !== -1) {
+            publication.comments.splice(index, 1);
+
+            const updatedPublication = await Publication.findOneAndUpdate(
+                { _id: req.params.publicationId },
+                { $set: { comments: publication.comments } },
+                { new: true }
+            );
+            try {
+                !publication
+                    ? res.status(404).json({ message: "No publication found" })
+                    : res.json(updatedPublication);
+            } catch (err) {
+                res.status(500).json(err);
+            }
+        } else {
+            res.status(500).json({ message: "Comment not found" });
+        }
     },
-}
+
+    async updateComment(req, res) {
+        const publication = await Publication.findOne({
+            _id: req.params.publicationId,
+        });
+        const index = publication.comments.findIndex(
+            (obj) => obj.id === req.params.commentId
+        );
+        if (index !== -1) {
+            publication.comments[index].commentBody = req.body.commentBody;
+
+            const updatedPublication = await Publication.findOneAndUpdate(
+                { _id: req.params.publicationId },
+                { $set: { comments: publication.comments } },
+                { new: true }
+            );
+            try {
+                !publication
+                    ? res.status(404).json({ message: "No publication found" })
+                    : res.json(updatedPublication);
+            } catch (err) {
+                res.status(500).json(err);
+            }
+        } else {
+            res.status(500).json({ message: "Comment not found" });
+        }
+    },
+};

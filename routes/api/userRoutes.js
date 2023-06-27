@@ -1,9 +1,9 @@
-const router = require('express').Router();
+const router = require("express").Router();
 const {
     getUsers,
     loginUser,
     getSingleUser,
-    createUser,
+    registerUser,
     updateUser,
     deleteUser,
     sendFriendRequest,
@@ -11,39 +11,42 @@ const {
     deleteFriend,
     deleteFriendRequest,
     getFriendsList,
-    getFriendRequestsList
-} = require('../../controllers/userController');
+    getFriendRequestsList,
+    updateUserPassword,
+} = require("../../controllers/userController");
 
 // /api/users
-router.route('/').get(getUsers);
+router.route("/").get(getUsers);
 
 // /api/users/login
-router.route('/login').post(loginUser);
+router.route("/login").post(loginUser);
 
 // /api/users/login
-router.route('/register').post(createUser);
+router.route("/register").post(registerUser);
 
 // /api/users/:userId
-router.route('/:userId').get(getSingleUser).put(updateUser).delete(deleteUser);
+router.route("/:userId").get(getSingleUser).put(updateUser).delete(deleteUser);
 
 // /api/users/:userId
-router.route('/:userId/password');
+router.route("/:userId/password").put(updateUserPassword);
 
 // /api/users/:userId/friends
-router.route('/:userId/friends').get(getFriendsList);
+router.route("/:userId/friends").get(getFriendsList);
 
 // /api/users/:userId/friends/:friendId
-router.route('/:userId/friends/:friendId').delete(deleteFriend);
+router.route("/:userId/friends/:friendId").delete(deleteFriend);
 
 // /api/users/:userId/friend-request
-router.route('/:userId/friend-request').get(getFriendRequestsList);
+router.route("/:userId/friend-request").get(getFriendRequestsList);
 
 // /api/users/:userId/friend-request/:friendId
-router.route('/:userId/friend-request/:friendId').delete(deleteFriendRequest);
+router.route("/:userId/friend-request/:friendId").delete(deleteFriendRequest);
 
 // /api/users/:userId/send-friend-request/:friendId
-router.route('/:userId/send-friend-request/:friendId').post(sendFriendRequest);
+router.route("/:userId/send-friend-request/:friendId").post(sendFriendRequest);
 
 // /api/users/:userId/accept-friend-request/:friendId
-router.route('/:userId/accept-friend-request/:friendId').post(acceptFriendRequest);
+router
+    .route("/:userId/accept-friend-request/:friendId")
+    .post(acceptFriendRequest);
 module.exports = router;
